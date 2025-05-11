@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waste Classification AI</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .demo-container { display: flex; gap: 30px; margin: 40px 0; }
+        .results { margin-top: 40px; }
+        img { max-width: 100%; }
+        #predictionResult { margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Automated Waste Classification</h1>
+        <p>An AI system that sorts waste into recyclable, compost, and landfill categories</p>
+    </div>
+
+    <div class="demo-container">
+        <div class="demo">
+            <h2>Try Our Model</h2>
+            <form id="uploadForm" enctype="multipart/form-data">
+                <input type="file" name="image" id="imageInput" accept="image/*" required><br><br>
+                <button type="submit">Classify Image</button>
+            </form>
+            <div id="predictionResult"></div>
+        </div>
+        <div class="info">
+            <h2>About the Project</h2>
+            <p>This system uses deep learning to classify waste images into 6 categories:</p>
+            <ul>
+                <li>Cardboard</li>
+                <li>Glass</li>
+                <li>Metal</li>
+                <li>Paper</li>
+                <li>Plastic</li>
+                <li>Trash</li>
+            </ul>
+
+            <h3>Dataset</h3>
+            <p>Combined dataset with:</p>
+            <ul>
+                <li>2,527 images from TrashNet</li>
+                <li>120 custom-collected images</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="results">
+        <h2>Results</h2>
+        <div class="metrics">
+            <img src="/static/training_metrics.png" alt="Training Metrics">
+            <img src="/static/confusion_matrix.png" alt="Confusion Matrix">
+        </div>
+        <p>Model achieves 90% accuracy on validation data</p>
+    </div>
+
+    <footer>
+        <p>Created for AI Course Final Project | May 2024</p>
+    </footer>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('predictionResult').innerText = `Prediction: ${data.class_name} (Confidence: ${(data.confidence).toFixed(2)}%)`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('predictionResult').innerText = 'Error during prediction.';
+            });
+        });
+    </script>
+</body>
+</html>
